@@ -33,8 +33,10 @@ app.config['TEMPLATES_AUTO_RELOAD']=True
 
 @app.route('/')
 def index():
-    return '<h1>CSC211 HW 7: Flask Assignment/n <a href="localhost:5000/list">Click here for lists</a></h1>'
+    return '<h1>CSC211 HW 7: Flask Assignment <a href="localhost:5000/list/<int:number>">Click here for lists</a></h1>'
 
 
-#@app.route('/list/')
-#@app.route('/')
+@app.route('/list/')
+@app.route('/list/number')
+def list(number=None):
+    return render_template('index.html', number=number)
