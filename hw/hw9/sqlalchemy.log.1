@@ -1,0 +1,51 @@
+# IPython log file
+
+# Tue, 08 Nov 2016 11:08:26
+print('hello')
+# Tue, 08 Nov 2016 11:08:37
+get_ipython().system('cat sqlalchemy.log')
+# Tue, 08 Nov 2016 11:19:43
+import sqlalchemy
+# Tue, 08 Nov 2016 11:20:02
+sqlalchemy.__version__
+#[Out]# '1.1.3'
+# Tue, 08 Nov 2016 11:22:41
+from sqlalchemy import create_engine
+# Tue, 08 Nov 2016 11:26:55
+engine = create_engine('sqlite:///:memory:', echo=True)
+# Tue, 08 Nov 2016 11:29:47
+from sqlalchemy.ext.declarative import declarative_base
+# Tue, 08 Nov 2016 11:30:32
+Base = declarative_base()
+# Tue, 08 Nov 2016 11:30:35
+Base
+#[Out]# sqlalchemy.ext.declarative.api.Base
+# Tue, 08 Nov 2016 11:31:34
+from sqlalchemy import column, Integer, String
+# Tue, 08 Nov 2016 11:40:43
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    fullname = Column(String)
+    password = Column(String)
+    def __repr__(self):
+        return "User(name='%s', fullname='%s', password='%s')>" % (self.name, self.fullname, self.password)
+    
+# Tue, 08 Nov 2016 11:41:53
+from sqlalchemy import Column, Integer, String
+# Tue, 08 Nov 2016 11:42:58
+class User(Base):
+    __tablename__ = 'myusers'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    fullname = Column(String)
+    password = Column(String)
+    def __repr__(self):
+        return "User(name='%s', fullname='%s', password='%s')>" % (self.name, self.fullname, self.password)
+    
+# Tue, 08 Nov 2016 11:43:50
+User.__table__
+#[Out]# Table('myusers', MetaData(bind=None), Column('id', Integer(), table=<myusers>, primary_key=True, nullable=False), Column('name', String(), table=<myusers>), Column('fullname', String(), table=<myusers>), Column('password', String(), table=<myusers>), schema=None)
+# Tue, 08 Nov 2016 11:47:11
+Base.metadata.create_all(engine)
