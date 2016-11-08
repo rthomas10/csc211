@@ -1,0 +1,56 @@
+# IPython log file
+
+get_ipython().magic('paste')
+# Tue, 08 Nov 2016 13:35:18
+ed_user = User(name='ed', fullname='Ed Jones', password='edspassword')
+# Tue, 08 Nov 2016 13:36:04
+ed_user = MyUser(name='ed',fullname='Ed Jones', password='edspassword')
+# Tue, 08 Nov 2016 13:36:10
+ed.user
+# Tue, 08 Nov 2016 13:36:16
+ed_user
+#[Out]# <MyUser(name='ed', fullname='Ed Jones', password='edspassword')>
+# Tue, 08 Nov 2016 13:36:36
+from sqlalchemy.orm import sessionmaker
+# Tue, 08 Nov 2016 13:36:51
+Session = sessionmaker(bind=engine)
+# Tue, 08 Nov 2016 13:42:06
+Session = sessionmaker()
+# Tue, 08 Nov 2016 13:42:25
+Session.configure(bind=engine)
+# Tue, 08 Nov 2016 13:42:45
+session = Session()
+# Tue, 08 Nov 2016 13:43:25
+ed_user = MyUser(name='ed',fullname='Ed Jones', password='edspassword')
+# Tue, 08 Nov 2016 13:43:35
+session.add(ed_user)
+# Tue, 08 Nov 2016 13:45:07
+our_user = session.query(User).filter_by(name='ed').first()
+# Tue, 08 Nov 2016 13:45:24
+our_user = session.query(MyUser).filter_by(name='ed').first()
+# Tue, 08 Nov 2016 13:45:38
+our_user
+#[Out]# <MyUser(name='ed', fullname='Ed Jones', password='edspassword')>
+# Tue, 08 Nov 2016 13:45:51
+ed_user is our_user
+#[Out]# True
+# Tue, 08 Nov 2016 13:51:21
+session.add_all([
+MyUser(name='wendy', fullname='Wendy Williams', password='foobar'),
+MyUser(name='mary', fullname='Mary Contrary', password='xxg527'),
+MyUser(name='fred', fullname='Fred Flinstone', password='blah')])
+# Tue, 08 Nov 2016 13:52:11
+ed_user.password = 'f8s7ccs'
+# Tue, 08 Nov 2016 13:52:28
+session.dirty
+#[Out]# IdentitySet([<MyUser(name='ed', fullname='Ed Jones', password='f8s7ccs')>])
+# Tue, 08 Nov 2016 13:52:43
+session.new
+#[Out]# IdentitySet([<MyUser(name='mary', fullname='Mary Contrary', password='xxg527')>, <MyUser(name='fred', fullname='Fred Flinstone', password='blah')>, <MyUser(name='wendy', fullname='Wendy Williams', password='foobar')>])
+# Tue, 08 Nov 2016 13:53:05
+session.commit()
+# Tue, 08 Nov 2016 13:53:14
+ed_user.id
+#[Out]# 1
+# Tue, 08 Nov 2016 13:54:00
+get_ipython().system('git add sqlalchemy.log.2')
