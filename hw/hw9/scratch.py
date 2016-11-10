@@ -19,3 +19,28 @@ class MyUser(Base):
        return "<MyUser(name='%s', fullname='%s', password='%s')>" % (self.name, self.fullname, self.password)
 
 Base.metadata.create_all(engine)
+
+ed_user = MyUser(name='ed', fullname='Ed Jones', password='edspassword')
+
+from sqlalchemy.orm import sessionmaker
+Session = sessionmaker(bind=engine)
+Session = sessionmaker()
+Session.configure(bind=engine)
+session = Session()
+
+ed_user = MyUser(name='ed', fullname='Ed Jones', password='edspassword
+session.add(ed_user)
+
+our_user = session.query(MyUser).filter_by(name='ed').first()
+
+session.add_all([
+    MyUser(name='wendy', fullname='Wendy Williams', password='foobar'),
+    MyUser(name='mary', fullname='Mary Contrary', password='xxg527'),
+    MyUser(name='fred', fullname='Fred Flinstone', password='blah')])
+
+ed_user.password = 'f8s7ccs'
+session.dirty
+session.new
+session.commit()
+
+ed_user.id
