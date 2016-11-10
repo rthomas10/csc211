@@ -1,4 +1,4 @@
-%logstart -ot sqlalchemy.log.2
+%logstart -ot sqlalchemy.log.3
 import sqlalchemy
 
 from sqlalchemy import create_engine
@@ -28,7 +28,7 @@ Session = sessionmaker()
 Session.configure(bind=engine)
 session = Session()
 
-ed_user = MyUser(name='ed', fullname='Ed Jones', password='edspassword
+ed_user = MyUser(name='ed', fullname='Ed Jones', password='edspassword')
 session.add(ed_user)
 
 our_user = session.query(MyUser).filter_by(name='ed').first()
