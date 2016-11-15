@@ -1,4 +1,4 @@
-%logstart -ot sqlalchemy.log.3
+%logstart -ot sqlalchemy.log.5
 import sqlalchemy
 
 from sqlalchemy import create_engine
@@ -46,13 +46,70 @@ session.commit()
 ed_user.id
 
 ed_user.name = 'Edwardo'
-fake_user = User(name='fakeuser', fullname='Invalid', password='12345')
+fake_user = MyUser(name='fakeuser', fullname='Invalid', password='12345')
 session.add(fake_user)
 
-session.query(User).filter(User.name.in_(['Edwardo', 'fakeuser'])).all()
+session.query(MyUser).filter(MyUser.name.in_(['Edwardo', 'fakeuser'])).all()
 
 session.rollback()
 ed_user.name
 fake_user in session
 
-session.query(User).filter(User.name.in_(['ed', 'fakeuser'])).all()
+session.query(MyUser).filter(MyUser.name.in_(['ed', 'fakeuser'])).all()
+
+for instance in session.query(MyUser).order_by(MyUser.id):
+     print(instance.name, instance.fullname)
+for name, fullname in session.query(MyUser.name, MyUser.fullname):
+     print(name, fullname)
+for row in session.query(MyUser, MyUser.name).all():
+     print(row.MyUser, row.name)
+for row in session.query(MyUser.name.label('name_label')).all():
+     print(row.name_label)
+
+from sqlalchemy.orm import aliased
+user_alias = aliased(MyUser, name='user_alias')
+
+for row in session.query(user_alias, user_alias.name).all():
+     print(row.user_alias)
+for u in session.query(MyUser).order_by(MyUser.id)[1:3]:
+     print(u)
+for name, in session.query(MyUser.name).filter_by(fullname='Ed Jones'):
+     print(name)
+for name, in session.query(MyUser.name).filter(MyUser.fullname=='Ed Jones'):
+     print(name)
+for user in session.query(MyUser).filter(MyUser.name=='ed').filter(MyUser.fullname=='Ed Jones'):
+     print(user)
+
+query = session.query(MyUser).filter(MyUser.name.like('%ed')).order_by(MyUser.id)
+query.all()
+query.first()
+user = query.one()
+user = query.filter(MyUser.id == 99).one()
+query = session.query(MyUser.id).filter(MyUser.name == 'ed').order_by(MyUser.id)
+
+from sqlalchemy import text
+for user in session.query(MyUser).filter(text("id<224")).order_by(text("id")).all():
+     print(user.name)
+session.query(MyUser).filter(text("id<:value and name=:name")).params(value=224, name='fred').order_by(MyUser.id).one()
+session.query(MyUser).from_statement(text("SELECT * FROM myusers where name=:name")).params(name='ed').all()
+stmt = text("SELECT name, id, fullname, password ""FROM myusers where name=:name")
+stmt = stmt.columns(MyUser.name, MyUser.id, MyUser.fullname, MyUser.password)
+session.query(MyUser).from_statement(stmt).params(name='ed').all()
+stmt = text("SELECT name, id FROM myusers where name=:name")
+stmt = stmt.columns(MyUser.name, MyUser.id)
+session.query(MyUser).filter(MyUser.name.like('%ed')).count()
+from sqlalchemy import func
+session.query(func.count(MyUser.name), MyUser.name).group_by(MyUser.name).all()
+session.query(func.count('*')).select_from(MyUser).scalar()
+session.query(func.count(MyUser.id)).scalar()
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+class Address(Base):
+     __tablename__ = 'addresses'
+     id = Column(Integer, primary_key=True)
+     email_address = Column(String, nullable=False)
+     user_id = Column(Integer, ForeignKey('myusers.id'))
+     user = relationship("MyUser", back_populates="addresses")
+     def __repr__(self):
+         return "<Address(email_address='%s')>" % self.email_address
