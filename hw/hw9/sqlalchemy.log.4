@@ -1,0 +1,221 @@
+# IPython log file
+
+# Fri, 11 Nov 2016 20:04:08
+import sqlalchemy
+# Fri, 11 Nov 2016 20:04:08
+from sqlalchemy import create_engine
+# Fri, 11 Nov 2016 20:04:08
+engine = create_engine('sqlite:///:memory:', echo=True)
+# Fri, 11 Nov 2016 20:04:08
+from sqlalchemy.ext.declarative import declarative_base
+# Fri, 11 Nov 2016 20:04:09
+Base = declarative_base()
+# Fri, 11 Nov 2016 20:04:09
+from sqlalchemy import Column, Integer, String
+# Fri, 11 Nov 2016 20:04:09
+class MyUser(Base):
+        __tablename__ = 'myusers'
+        id = Column(Integer, primary_key=True)
+        name = Column(String)
+        fullname = Column(String)
+        password = Column(String)
+    
+# Fri, 11 Nov 2016 20:04:09
+def __repr__(self):
+       return "<MyUser(name='%s', fullname='%s', password='%s')>" % (self.name, self.fullname, self.password)
+
+# Fri, 11 Nov 2016 20:04:09
+Base.metadata.create_all(engine)
+# Fri, 11 Nov 2016 20:04:09
+ed_user = MyUser(name='ed', fullname='Ed Jones', password='edspassword')
+# Fri, 11 Nov 2016 20:04:09
+from sqlalchemy.orm import sessionmaker
+# Fri, 11 Nov 2016 20:04:09
+Session = sessionmaker(bind=engine)
+# Fri, 11 Nov 2016 20:04:09
+Session = sessionmaker()
+# Fri, 11 Nov 2016 20:04:09
+Session.configure(bind=engine)
+# Fri, 11 Nov 2016 20:04:09
+session = Session()
+# Fri, 11 Nov 2016 20:04:09
+ed_user = MyUser(name='ed', fullname='Ed Jones', password='edspassword')
+# Fri, 11 Nov 2016 20:04:09
+session.add(ed_user)
+# Fri, 11 Nov 2016 20:04:09
+our_user = session.query(MyUser).filter_by(name='ed').first()
+# Fri, 11 Nov 2016 20:04:09
+session.add_all([
+    MyUser(name='wendy', fullname='Wendy Williams', password='foobar'),
+    MyUser(name='mary', fullname='Mary Contrary', password='xxg527'),
+    MyUser(name='fred', fullname='Fred Flinstone', password='blah')])
+# Fri, 11 Nov 2016 20:04:09
+ed_user.password = 'f8s7ccs'
+# Fri, 11 Nov 2016 20:04:09
+session.dirty
+#[Out]# IdentitySet([<__main__.MyUser object at 0x7f09fe3ef3c8>])
+# Fri, 11 Nov 2016 20:04:09
+session.new
+#[Out]# IdentitySet([<__main__.MyUser object at 0x7f09fe40e748>, <__main__.MyUser object at 0x7f09fe40e710>, <__main__.MyUser object at 0x7f09fe40e7b8>])
+# Fri, 11 Nov 2016 20:04:09
+session.commit()
+# Fri, 11 Nov 2016 20:04:09
+ed_user.id
+#[Out]# 1
+# Fri, 11 Nov 2016 20:04:09
+ed_user.name = 'Edwardo'
+# Fri, 11 Nov 2016 20:04:09
+fake_user = MyUser(name='fakeuser', fullname='Invalid', password='12345')
+# Fri, 11 Nov 2016 20:04:09
+session.add(fake_user)
+# Fri, 11 Nov 2016 20:04:09
+session.query(MyUser).filter(MyUser.name.in_(['Edwardo', 'fakeuser'])).all()
+#[Out]# [<__main__.MyUser at 0x7f09fe3ef3c8>, <__main__.MyUser at 0x7f09fe40e940>]
+# Fri, 11 Nov 2016 20:04:10
+session.rollback()
+# Fri, 11 Nov 2016 20:04:10
+ed_user.name
+#[Out]# 'ed'
+# Fri, 11 Nov 2016 20:04:10
+fake_user in session
+#[Out]# False
+# Fri, 11 Nov 2016 20:04:26
+session.query(MyUser).filter(MyUser.name.in_(['ed', 'fakeuser'])).all()
+#[Out]# [<__main__.MyUser at 0x7f09fe3ef3c8>]
+# Fri, 11 Nov 2016 20:10:56
+for instance in session.query(MyUser).order_by(MyUser.id):
+    print(instance.name, instance.fullname)
+    
+# Fri, 11 Nov 2016 20:13:29
+for name, fullname in session.query(MyUser.name, MyUser.fullname):
+    print(name, fullname)
+    
+# Fri, 11 Nov 2016 20:14:29
+for row in session.query(MyUser, MyUser.name).all():
+    print(row.MyUser, row.name)
+    
+# Fri, 11 Nov 2016 20:32:49
+for row in session.query(MyUser.name.label('name_label')).all():
+    print(row.name.label)
+    
+# Fri, 11 Nov 2016 20:33:15
+for row in session.query(MyUser.name.label('name_label')).all():
+    print(row.name_label)
+    
+# Fri, 11 Nov 2016 20:34:17
+from sqlalchemy.orm import aliased
+# Fri, 11 Nov 2016 20:34:45
+user_alias = aliased(MyUser, name='user_alias')
+# Fri, 11 Nov 2016 20:36:22
+for row in session.query(user_alias, user_alias.name).all():
+    print(row.user_alias)
+    
+# Fri, 11 Nov 2016 20:38:11
+for u in session.query.orer_by(MyUser.id)[1:3]:
+    print(u)
+    
+# Fri, 11 Nov 2016 20:38:29
+for u in session.query.order_by(MyUser.id)[1:3]:
+    print(u)
+    
+# Fri, 11 Nov 2016 20:39:04
+for u in session.query(MyUser).order_by(MyUser.id)[1:3]:
+    print(u)
+    
+# Fri, 11 Nov 2016 20:39:59
+for name, in session.query(MyUser.name).filter_by(fullname='Ed Jones'):
+    print(name)
+    
+# Fri, 11 Nov 2016 20:40:59
+for name, in session.query(MyUser.name).filter_by(MyUser.fullname=='Ed Jones'):
+    print(name)
+    
+# Fri, 11 Nov 2016 20:41:27
+for name, in session.query(MyUser.name).filter(MyUser.fullname=='Ed Jones'):
+    print(name)
+    
+# Fri, 11 Nov 2016 20:42:54
+for user in session.query(MyUser).filter(MyUser.name=='ed').filter(MyUser.fullname=='Ed Jones'):
+    print(user)
+    
+# Fri, 11 Nov 2016 20:43:24
+query.filter(MyUser.name == 'ed')
+# Fri, 11 Nov 2016 20:46:13
+query.filter(MyUser.name != 'ed')
+# Fri, 11 Nov 2016 20:49:25
+query.filter(MyUser.name.like('%ed%'))
+# Fri, 11 Nov 2016 20:50:06
+query.filter(MyUser.name.in_(['ed', 'wendy', 'jack']))
+# Fri, 11 Nov 2016 20:51:37
+query = session.query(MyUser).filter(MyUser.name.like('%ed%')).order_by(Myuser.id)
+# Fri, 11 Nov 2016 20:52:04
+query = session.query(MyUser).filter(MyUser.name.like('%ed%')).order_by(MyUser.id)
+# Fri, 11 Nov 2016 20:52:17
+query.all()
+#[Out]# [<__main__.MyUser at 0x7f09fe3ef3c8>, <__main__.MyUser at 0x7f09fe40e7b8>]
+# Fri, 11 Nov 2016 20:52:30
+query.first()
+#[Out]# <__main__.MyUser at 0x7f09fe3ef3c8>
+# Fri, 11 Nov 2016 20:52:43
+user = query.one()
+# Fri, 11 Nov 2016 20:53:36
+user = query.filter(MyUser.id == 99).one()
+# Fri, 11 Nov 2016 20:54:58
+query = session.query(MyUser.id).filter(MyUser.name == 'ed').order_by(MyUser.id)
+# Fri, 11 Nov 2016 20:55:05
+query.scalar()
+#[Out]# 1
+# Fri, 11 Nov 2016 20:55:21
+from sqlalchemy import text
+# Fri, 11 Nov 2016 20:56:08
+for user in session.query(MyUser).filter(text("id<224")).order_by(text("id")).all():
+    print(user.name)
+    
+# Fri, 11 Nov 2016 20:58:50
+session.query(MyUser).from_statement(
+text("SELECT * FROM users where name=:name")).params(name='ed').all()
+# Fri, 11 Nov 2016 20:59:45
+session.query(User).from_statement(text("SELECT * FROM users where name=:name")).params(name='ed').all()
+# Fri, 11 Nov 2016 21:00:05
+session.query(MyUser).from_statement(text("SELECT * FROM users where name=:name")).params(name='ed').all()
+# Fri, 11 Nov 2016 21:00:25
+session.query(MyUser).from_statement(text("SELECT * FROM myusers where name=:name")).params(name='ed').all()
+#[Out]# [<__main__.MyUser at 0x7f09fe3ef3c8>]
+# Fri, 11 Nov 2016 21:02:14
+stmt = text("SELECT name, id, fullname, password "FROM myusers where name=:name")
+# Fri, 11 Nov 2016 21:02:41
+stmt = text("SELECT name, id, fullname, password ""FROM myusers where name=:name")
+# Fri, 11 Nov 2016 21:03:43
+stmt = stmt.columns(MyUser.name, MyUser.id, MyUser.fullname, MyUser.password)
+# Fri, 11 Nov 2016 21:04:27
+session.query(MyUser).from_statement(stmt).params(name='ed').all()
+#[Out]# [<__main__.MyUser at 0x7f09fe3ef3c8>]
+# Fri, 11 Nov 2016 21:05:15
+stmt = text('SELECT name, id FROM users where name=:name')
+# Fri, 11 Nov 2016 21:05:55
+stmt = text('SELECT name, id FROM myusers where name=:name')
+# Fri, 11 Nov 2016 21:07:19
+stmt = stmt.columns(MyUser.name, MyUser.id)
+# Fri, 11 Nov 2016 21:08:16
+session.query(MyUser.id, MyUser.name).from_statement(stmt).params(name='ed').all()
+#[Out]# [(1, 'ed')]
+# Fri, 11 Nov 2016 21:09:12
+session.query(MyUser).filter(MyUser.name.like('%ed%')).count()
+#[Out]# 2
+# Fri, 11 Nov 2016 21:09:36
+from sqlalchemy import func
+# Fri, 11 Nov 2016 21:10:42
+session.query(func.count(MyUser.name), MyUser.name).group_by(MyUser.name).all()
+#[Out]# [(1, 'ed'), (1, 'fred'), (1, 'mary'), (1, 'wendy')]
+# Fri, 11 Nov 2016 21:11:30
+session.query(func.count('*')).select_from(MyUser).scalar()
+#[Out]# 4
+# Fri, 11 Nov 2016 21:11:54
+session.query(func.count(MyUser.id)).scalar()
+#[Out]# 4
+# Fri, 11 Nov 2016 21:12:22
+from sqlalchemy import ForeignKey
+# Fri, 11 Nov 2016 21:12:47
+from sqlalchemy.orm import relationship
+# Fri, 11 Nov 2016 21:23:30
+exit()
